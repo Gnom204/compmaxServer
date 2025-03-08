@@ -1,13 +1,20 @@
 const Computer = require("../models/ComputerModel");
 
 const createComputer = async (req, res) => {
-  const { name, price, image, description } = req.body;
-  if (!name || !price || !image || !description) {
+  const { name, price, image, genre, description } = req.body;
+  console.log(name, price, image, genre, description);
+  if (!name || !price || !image || !description || !genre) {
     return res.status(400).json({ error: "Fill in all the fields" });
   }
   try {
-    const computer = await Computer.create({ name, price, image, description });
-    return res.status(201).json(computer);
+    const computer = await Computer.create({
+      name,
+      price,
+      image,
+      genre,
+      description,
+    });
+    return res.status(201).json({ comp: computer });
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -23,6 +30,7 @@ const getAllComputers = async (req, res) => {
 };
 
 const getComputerById = async (req, res) => {
+  console.log(req.params.id);
   try {
     const computer = await Computer.findById(req.params.id);
     if (!computer) {
@@ -42,6 +50,7 @@ const updateComputer = async (req, res) => {
         name: req.body.name,
         price: req.body.price,
         image: req.body.image,
+        genre: req.body.genre,
         description: req.body.description,
       },
       {
@@ -59,7 +68,7 @@ const updateComputer = async (req, res) => {
 
 const deleteComputer = async (req, res) => {
   try {
-    const computer = await Computer.findByIdAndRemove(req.params.id);
+    const computer = await Computer.findByIdAndDelete(req.params.id);
     if (!computer) {
       return res.status(404).json({ error: "Computer not found" });
     }
